@@ -7,7 +7,7 @@ SmoothGradient helps you generate beautiful and buttery-smooth gradients. It hel
 
 This is a package strongly inspired by this [gradient generator](https://learnui.design/tools/gradient-generator.html). You can click into the link to learn how this works.
 
-![Image](https://github.com/intitni/SmoothGradient/blob/main/Resources/Gradients.png)
+![Image](https://github.com/intitni/SmoothGradient/raw/main/Resources/Gradients.png)
 
 ## Usage
 
