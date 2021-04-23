@@ -122,7 +122,7 @@ import SwiftUI
 
 extension SmoothGradientGenerator {
     /// Generate gradient from SwiftUI `Color`s.
-    @available(iOS 14.0, OSX 11, *)
+    @available(iOS 14.0, OSX 11, tvOS 14, *)
     public func generate(
         from: Color,
         to: Color,
@@ -150,7 +150,7 @@ extension SmoothGradientGenerator {
     }
 }
 
-@available(iOS 14.0, OSX 11, *)
+@available(iOS 14.0, OSX 11, tvOS 14, *)
 extension Color {
     func toRGB() -> RGBColor {
         guard let components = cgColor?.components else { return .init(r: 0, g: 0, b: 0, alpha: 0) }
