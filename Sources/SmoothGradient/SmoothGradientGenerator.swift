@@ -116,7 +116,7 @@ extension NSColor {
 
 #endif
 
-#if canImport(SwiftUI) && arch(arm64)
+#if canImport(SwiftUI) && (arch(arm64) || arch(x86_64))
 
 import SwiftUI
 
