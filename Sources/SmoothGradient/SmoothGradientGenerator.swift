@@ -163,6 +163,19 @@ extension Color {
     }
 }
 
+extension RGBColor {
+	func toColor() -> Color {
+		Color(
+			Color.RGBColorSpace.sRGB,
+			red: Double(r),
+			green: Double(g),
+			blue: Double(b),
+			opacity: Double(alpha)
+		)
+	}
+}
+
+
 #endif
 
 /// Generate intermediate colors.
