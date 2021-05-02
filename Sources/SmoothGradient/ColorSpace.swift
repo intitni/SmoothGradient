@@ -97,7 +97,7 @@ public struct RGBColor {
     }
 
     /// Converts RGB to HSL (https://en.wikipedia.org/wiki/HSL_and_HSV)
-    func toHSL() -> HSLColor {
+    public func toHSL() -> HSLColor {
         let max = Swift.max(r, g, b)
         let min = Swift.min(r, g, b)
 
@@ -125,7 +125,7 @@ public struct RGBColor {
     }
 
     /// Converts RGB to HSB (https://en.wikipedia.org/wiki/HSL_and_HSV)
-    func toHSB() -> HSBColor {
+    public func toHSB() -> HSBColor {
         var h, s, v: Double
 
         let max = Swift.max(r, g, b)
@@ -153,7 +153,7 @@ public struct RGBColor {
         return HSBColor(h: h * 360, s: s * 100, b: v * 100, alpha: alpha)
     }
 
-    func lerp(_ other: RGBColor, t: Double) -> RGBColor {
+    public func lerp(_ other: RGBColor, t: Double) -> RGBColor {
         return RGBColor(
             r: r + (other.r - r) * t,
             g: g + (other.g - g) * t,
@@ -165,13 +165,13 @@ public struct RGBColor {
 
 // MARK: - XYZ
 
-struct XYZColor {
+public struct XYZColor {
     let x: Double // 0..0.95047
     let y: Double // 0..1
     let z: Double // 0..1.08883
     let alpha: Double // 0..1
 
-    init(x: Double, y: Double, z: Double, alpha: Double) {
+    public init(x: Double, y: Double, z: Double, alpha: Double) {
         self.x = x
         self.y = y
         self.z = z
@@ -184,7 +184,7 @@ struct XYZColor {
         return v > 0 ? out : -out
     }
 
-    func toRGB() -> RGBColor {
+    public func toRGB() -> RGBColor {
         let r = (x * 3.2404542) + (y * -1.5371385) + (z * -0.4985314)
         let g = (x * -0.9692660) + (y * 1.8760108) + (z * 0.0415560)
         let b = (x * 0.0556434) + (y * -0.2040259) + (z * 1.0572252)
@@ -198,7 +198,7 @@ struct XYZColor {
         return v > LAB_E ? pow(v, 1.0 / 3.0) : (LAB_K_116 * v) + LAB_16_116
     }
 
-    func toLAB() -> LABColor {
+    public func toLAB() -> LABColor {
         let fx = labCompand(x / LAB_X)
         let fy = labCompand(y / LAB_Y)
         let fz = labCompand(z / LAB_Z)
@@ -210,20 +210,20 @@ struct XYZColor {
         )
     }
 
-    func toLCH() -> LCHColor {
+    public func toLCH() -> LCHColor {
         return toLAB().toLCH()
     }
 }
 
 // MARK: - LAB
 
-struct LABColor {
+public struct LABColor {
     let l: Double //    0..100
     let a: Double // -128..128
     let b: Double // -128..128
     let alpha: Double //    0..1
 
-    init(l: Double, a: Double, b: Double, alpha: Double) {
+    public init(l: Double, a: Double, b: Double, alpha: Double) {
         self.l = l
         self.a = a
         self.b = b
@@ -235,7 +235,7 @@ struct LABColor {
         return v3 > LAB_E ? v3 : (v - LAB_16_116) / LAB_K_116
     }
 
-    func toXYZ() -> XYZColor {
+    public func toXYZ() -> XYZColor {
         let y = (l + 16) / 116
         let x = y + (a / 500)
         let z = y - (b / 200)
@@ -247,59 +247,66 @@ struct LABColor {
         )
     }
 
-    func toLCH() -> LCHColor {
+    public func toLCH() -> LCHColor {
         let c = sqrt(a * a + b * b)
         let angle = atan2(b, a) * RAD_TO_DEG
         let h = angle < 0 ? angle + 360 : angle
         return LCHColor(l: l, c: c, h: h, alpha: alpha)
     }
 
-    func toRGB() -> RGBColor {
+    public func toRGB() -> RGBColor {
         return toXYZ().toRGB()
     }
 }
 
 // MARK: - LCH
 
-struct LCHColor {
+public struct LCHColor {
     let l: Double // 0..100
     let c: Double // 0..128
     let h: Double // 0..360
     let alpha: Double // 0..1
 
-    init(l: Double, c: Double, h: Double, alpha: Double) {
+    public init(l: Double, c: Double, h: Double, alpha: Double) {
         self.l = l
         self.c = c
         self.h = h
         self.alpha = alpha
     }
 
-    func toLAB() -> LABColor {
+    public func toLAB() -> LABColor {
         let rad = h / RAD_TO_DEG
         let a = cos(rad) * c
         let b = sin(rad) * c
         return LABColor(l: l, a: a, b: b, alpha: alpha)
     }
 
-    func toXYZ() -> XYZColor {
+    public func toXYZ() -> XYZColor {
         return toLAB().toXYZ()
     }
 
-    func toRGB() -> RGBColor {
+    public func toRGB() -> RGBColor {
         return toXYZ().toRGB()
     }
 }
 
 // MARK: - HSL
 
-struct HSLColor {
+public struct HSLColor {
     let h: Double // 0..360
     let s: Double // 0..100
     let l: Double // 0..100
     let alpha: Double // 0..1
 
+	public init(h:Double, s:Double, l:Double, alpha:Double) {
+		self.h = h
+		self.s = s
+		self.l = l
+		self.alpha = alpha
+	}
+	
     /// Converts HSL to RGB (https://en.wikipedia.org/wiki/HSL_and_HSV)
-    func toRGB() -> RGBColor {
+    public func toRGB() -> RGBColor {
         var r, g, b: Double
 
         let nl = l / 100
@@ -331,14 +338,21 @@ struct HSLColor {
 
 // MARK: - HSB / HSV
 
-struct HSBColor {
+public struct HSBColor {
     let h: Double // 0..360
     let s: Double // 0..100
     let b: Double // 0..100
     let alpha: Double // 0..1
 
+	public init(h:Double, s:Double, b:Double, alpha:Double) {
+		self.h = h
+		self.s = s
+		self.b = b
+		self.alpha = alpha
+	}
+	
     /// Converts HSB to RGB (https://en.wikipedia.org/wiki/HSL_and_HSV)
-    func toRGB() -> RGBColor {
+    public func toRGB() -> RGBColor {
         let nb = b / 100
         let ns = s / 100
 
