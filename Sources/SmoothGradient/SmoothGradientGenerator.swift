@@ -14,6 +14,16 @@ public enum SmoothGradientPrecision: Int {
     case high = 9
 }
 
+protocol RGBColorConvertible {
+    func toRGB() -> RGBColor
+}
+
+extension XYZColor: RGBColorConvertible {}
+extension LABColor: RGBColorConvertible {}
+extension LCHColor: RGBColorConvertible {}
+extension HSLColor: RGBColorConvertible {}
+extension HSBColor: RGBColorConvertible {}
+
 /// Generate a set of intermediate colors to make gradient of 2 colors buttery-smooth.
 public struct SmoothGradientGenerator {
     public init() {}
@@ -28,19 +38,14 @@ public struct SmoothGradientGenerator {
         let count = precision.rawValue
         return interpolate(from: from, to: to, count: count, interpolation: interpolation)
     }
-}
 
-#if canImport(UIKit)
-import UIKit
-
-extension SmoothGradientGenerator {
-    /// Generate gradient from `UIColor`s.
-    public func generate(
-        from: UIColor,
-        to: UIColor,
-        interpolation: SmoothGradientInterpolation = .hcl,
-        precision: SmoothGradientPrecision = .medium
-    ) -> [UIColor] {
+    /// Generate gradient from any type that convertible from/to RGBColor
+    func generateAsRGBColor<T: RGBColorConvertible>(
+        from: T,
+        to: T,
+        interpolation: SmoothGradientInterpolation,
+        precision: SmoothGradientPrecision
+    ) -> [RGBColor] {
         let rgb_from = from.toRGB()
         let rgb_to = to.toRGB()
         return generate(
@@ -49,18 +54,140 @@ extension SmoothGradientGenerator {
             interpolation: interpolation,
             precision: precision
         )
-        .map {
-            UIColor(
-                red: CGFloat($0.r),
-                green: CGFloat($0.g),
-                blue: CGFloat($0.b),
-                alpha: CGFloat($0.alpha)
+    }
+
+    /// Generate gradient from `LCHColor`s. Default to interpolate in LCH.
+    ///
+    /// When interpolating in color space other than LCH, colors will be converted to RGBColor for
+    /// computation.
+    public func generate(
+        from: LCHColor,
+        to: LCHColor,
+        interpolation: SmoothGradientInterpolation = .hcl,
+        precision: SmoothGradientPrecision = .medium
+    ) -> [LCHColor] {
+        switch interpolation {
+        case .hcl:
+            let count = precision.rawValue
+            return interpolate(from: from, to: to, count: count)
+        default:
+            return generateAsRGBColor(
+                from: from,
+                to: to,
+                interpolation: interpolation,
+                precision: precision
             )
+            .map { $0.toLCH() }
         }
+    }
+
+    /// Generate gradient from `HSLColor`s. Default to interpolate in HSL.
+    ///
+    /// When interpolating in color space other than HSL, colors will be converted to RGBColor for
+    /// computation.
+    public func generate(
+        from: HSLColor,
+        to: HSLColor,
+        interpolation: SmoothGradientInterpolation = .hsl,
+        precision: SmoothGradientPrecision = .medium
+    ) -> [HSLColor] {
+        switch interpolation {
+        case .hsl:
+            let count = precision.rawValue
+            return interpolate(from: from, to: to, count: count)
+        default:
+            return generateAsRGBColor(
+                from: from,
+                to: to,
+                interpolation: interpolation,
+                precision: precision
+            )
+            .map { $0.toHSL() }
+        }
+    }
+
+    /// Generate gradient from `HSBColor`s. Default to interpolate in HSB.
+    ///
+    /// When interpolating in color space other than HSB, colors will be converted to RGBColor for
+    /// computation.
+    public func generate(
+        from: HSBColor,
+        to: HSBColor,
+        interpolation: SmoothGradientInterpolation = .hsb,
+        precision: SmoothGradientPrecision = .medium
+    ) -> [HSBColor] {
+        switch interpolation {
+        case .hsb:
+            let count = precision.rawValue
+            return interpolate(from: from, to: to, count: count)
+        default:
+            return generateAsRGBColor(
+                from: from,
+                to: to,
+                interpolation: interpolation,
+                precision: precision
+            )
+            .map { $0.toHSB() }
+        }
+    }
+
+    /// Generate gradient from `LABColor`s.
+    public func generate(
+        from: LABColor,
+        to: LABColor,
+        interpolation: SmoothGradientInterpolation = .hcl,
+        precision: SmoothGradientPrecision = .medium
+    ) -> [LABColor] {
+        return generateAsRGBColor(
+            from: from,
+            to: to,
+            interpolation: interpolation,
+            precision: precision
+        )
+        .map { $0.toLAB() }
+    }
+
+    /// Generate gradient from `XYZColor`s.
+    public func generate(
+        from: XYZColor,
+        to: XYZColor,
+        interpolation: SmoothGradientInterpolation = .hcl,
+        precision: SmoothGradientPrecision = .medium
+    ) -> [XYZColor] {
+        return generateAsRGBColor(
+            from: from,
+            to: to,
+            interpolation: interpolation,
+            precision: precision
+        )
+        .map { $0.toXYZ() }
     }
 }
 
-extension UIColor {
+#if canImport(UIKit)
+import UIKit
+
+public extension SmoothGradientGenerator {
+    /// Generate gradient from `UIColor`s.
+    func generate(
+        from: UIColor,
+        to: UIColor,
+        interpolation: SmoothGradientInterpolation = .hcl,
+        precision: SmoothGradientPrecision = .medium
+    ) -> [UIColor] {
+        generateAsRGBColor(from: from, to: to, interpolation: interpolation, precision: precision)
+            .map {
+                UIColor(
+                    red: CGFloat($0.r),
+                    green: CGFloat($0.g),
+                    blue: CGFloat($0.b),
+                    alpha: CGFloat($0.alpha)
+                )
+            }
+    }
+}
+
+extension UIColor: RGBColorConvertible {
     func toRGB() -> RGBColor {
         var r: CGFloat = 0
         var g: CGFloat = 0
@@ -75,34 +202,27 @@ extension UIColor {
 #elseif canImport(AppKit)
 import AppKit
 
-extension SmoothGradientGenerator {
+public extension SmoothGradientGenerator {
     /// Generate gradient from `NSColor`s.
-    public func generate(
+    func generate(
         from: NSColor,
         to: NSColor,
         interpolation: SmoothGradientInterpolation = .hcl,
         precision: SmoothGradientPrecision = .medium
     ) -> [NSColor] {
-        let rgb_from = from.toRGB()
-        let rgb_to = to.toRGB()
-        return generate(
-            from: rgb_from,
-            to: rgb_to,
-            interpolation: interpolation,
-            precision: precision
-        )
-        .map {
-            NSColor(
-                red: CGFloat($0.r),
-                green: CGFloat($0.g),
-                blue: CGFloat($0.b),
-                alpha: CGFloat($0.alpha)
-            )
-        }
+        generateAsRGBColor(from: from, to: to, interpolation: interpolation, precision: precision)
+            .map {
+                NSColor(
+                    red: CGFloat($0.r),
+                    green: CGFloat($0.g),
+                    blue: CGFloat($0.b),
+                    alpha: CGFloat($0.alpha)
+                )
+            }
     }
 }
 
-extension NSColor {
+extension NSColor: RGBColorConvertible {
     func toRGB() -> RGBColor {
         var r: CGFloat = 0
         var g: CGFloat = 0
@@ -120,10 +240,10 @@ extension NSColor {
 
 import SwiftUI
 
-extension SmoothGradientGenerator {
+public extension SmoothGradientGenerator {
     /// Generate gradient from SwiftUI `Color`s.
     @available(iOS 14.0, OSX 11, tvOS 14, *)
-    public func generate(
+    func generate(
         from: Color,
         to: Color,
         colorSpace: Color.RGBColorSpace = .sRGB,
@@ -176,40 +296,49 @@ func interpolate(
     case .hcl:
         let lch_from = from.toLCH()
         let lch_to = to.toLCH()
-        let l = interpolate(from: lch_from.l, to: lch_to.l, count: count)
-        let c = interpolate(from: lch_from.c, to: lch_to.c, count: count)
-        let h = interpolateCircular(from: lch_from.h, to: lch_to.h, count: count)
-        let alpha = interpolate(from: lch_from.alpha, to: lch_to.alpha, count: count)
-
-        return zip(l, c, h, alpha)
-            .lazy
-            .map(LCHColor.init(l:c:h:alpha:))
+        return interpolate(from: lch_from, to: lch_to, count: count)
             .map { $0.toRGB() }
     case .hsl:
         let hsl_from = from.toHSL()
         let hsl_to = to.toHSL()
-        let l = interpolate(from: hsl_from.l, to: hsl_to.l, count: count)
-        let s = interpolate(from: hsl_from.s, to: hsl_to.s, count: count)
-        let h = interpolateCircular(from: hsl_from.h, to: hsl_to.h, count: count)
-        let alpha = interpolate(from: hsl_from.alpha, to: hsl_to.alpha, count: count)
-
-        return zip(h, s, l, alpha)
-            .lazy
-            .map(HSLColor.init(h:s:l:alpha:))
+        return interpolate(from: hsl_from, to: hsl_to, count: count)
             .map { $0.toRGB() }
     case .hsb:
         let hsb_from = from.toHSB()
         let hsb_to = to.toHSB()
-        let b = interpolate(from: hsb_from.b, to: hsb_to.b, count: count)
-        let s = interpolate(from: hsb_from.s, to: hsb_to.s, count: count)
-        let h = interpolateCircular(from: hsb_from.h, to: hsb_to.h, count: count)
-        let alpha = interpolate(from: hsb_from.alpha, to: hsb_to.alpha, count: count)
-
-        return zip(h, s, b, alpha)
-            .lazy
-            .map(HSBColor.init(h:s:b:alpha:))
+        return interpolate(from: hsb_from, to: hsb_to, count: count)
             .map { $0.toRGB() }
     }
+}
+
+func interpolate(from: LCHColor, to: LCHColor, count: Int) -> [LCHColor] {
+    let l = interpolate(from: from.l, to: to.l, count: count)
+    let c = interpolate(from: from.c, to: to.c, count: count)
+    let h = interpolateCircular(from: from.h, to: to.h, count: count)
+    let alpha = interpolate(from: from.alpha, to: to.alpha, count: count)
+
+    return zip(l, c, h, alpha)
+        .map(LCHColor.init(l:c:h:alpha:))
+}
+
+func interpolate(from: HSLColor, to: HSLColor, count: Int) -> [HSLColor] {
+    let l = interpolate(from: from.l, to: to.l, count: count)
+    let s = interpolate(from: from.s, to: to.s, count: count)
+    let h = interpolateCircular(from: from.h, to: to.h, count: count)
+    let alpha = interpolate(from: from.alpha, to: to.alpha, count: count)
+
+    return zip(h, s, l, alpha)
+        .map(HSLColor.init(h:s:l:alpha:))
+}
+
+func interpolate(from: HSBColor, to: HSBColor, count: Int) -> [HSBColor] {
+    let b = interpolate(from: from.b, to: to.b, count: count)
+    let s = interpolate(from: from.s, to: to.s, count: count)
+    let h = interpolateCircular(from: from.h, to: to.h, count: count)
+    let alpha = interpolate(from: from.alpha, to: to.alpha, count: count)
+
+    return zip(h, s, b, alpha)
+        .map(HSBColor.init(h:s:b:alpha:))
 }
 
 /// Interpolate values linearly.

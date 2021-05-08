@@ -44,6 +44,38 @@ let hsbColors = SmoothGradientGenerator()
         precision: .high
     )
 
+_ = SmoothGradientGenerator().generate(
+    from: LCHColor(l: 1, c: 1, h: 1, alpha: 1),
+    to: LCHColor(l: 1, c: 1, h: 1, alpha: 1),
+    precision: .high
+)
+
+_ = SmoothGradientGenerator().generate(
+    from: HSLColor(h: 1, s: 1, l: 1, alpha: 1),
+    to: HSLColor(h: 1, s: 1, l: 1, alpha: 1),
+    precision: .high
+)
+
+_ = SmoothGradientGenerator().generate(
+    from: HSBColor(h: 1, s: 1, b: 1, alpha: 1),
+    to: HSBColor(h: 1, s: 1, b: 1, alpha: 1),
+    precision: .high
+)
+
+_ = SmoothGradientGenerator().generate(
+    from: XYZColor(x: 1, y: 1, z: 1, alpha: 1),
+    to: XYZColor(x: 1, y: 1, z: 1, alpha: 1),
+    interpolation: .hsb,
+    precision: .high
+)
+
+_ = SmoothGradientGenerator().generate(
+    from: LABColor(l: 1, a: 1, b: 1, alpha: 1),
+    to: LABColor(l: 1, a: 1, b: 1, alpha: 1),
+    interpolation: .hsb,
+    precision: .high
+)
+
 struct ContentView: View {
     var body: some View {
         VStack {

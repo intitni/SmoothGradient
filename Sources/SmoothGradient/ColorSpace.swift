@@ -152,26 +152,17 @@ public struct RGBColor {
 
         return HSBColor(h: h * 360, s: s * 100, b: v * 100, alpha: alpha)
     }
-
-    func lerp(_ other: RGBColor, t: Double) -> RGBColor {
-        return RGBColor(
-            r: r + (other.r - r) * t,
-            g: g + (other.g - g) * t,
-            b: b + (other.b - b) * t,
-            alpha: alpha + (other.alpha - alpha) * t
-        )
-    }
 }
 
 // MARK: - XYZ
 
-struct XYZColor {
-    let x: Double // 0..0.95047
-    let y: Double // 0..1
-    let z: Double // 0..1.08883
-    let alpha: Double // 0..1
+public struct XYZColor {
+    public let x: Double // 0..0.95047
+    public let y: Double // 0..1
+    public let z: Double // 0..1.08883
+    public let alpha: Double // 0..1
 
-    init(x: Double, y: Double, z: Double, alpha: Double) {
+    public init(x: Double, y: Double, z: Double, alpha: Double) {
         self.x = x
         self.y = y
         self.z = z
@@ -217,13 +208,13 @@ struct XYZColor {
 
 // MARK: - LAB
 
-struct LABColor {
-    let l: Double //    0..100
-    let a: Double // -128..128
-    let b: Double // -128..128
-    let alpha: Double //    0..1
+public struct LABColor {
+    public let l: Double //    0..100
+    public let a: Double // -128..128
+    public let b: Double // -128..128
+    public let alpha: Double //    0..1
 
-    init(l: Double, a: Double, b: Double, alpha: Double) {
+    public init(l: Double, a: Double, b: Double, alpha: Double) {
         self.l = l
         self.a = a
         self.b = b
@@ -261,13 +252,13 @@ struct LABColor {
 
 // MARK: - LCH
 
-struct LCHColor {
-    let l: Double // 0..100
-    let c: Double // 0..128
-    let h: Double // 0..360
-    let alpha: Double // 0..1
+public struct LCHColor {
+    public let l: Double // 0..100
+    public let c: Double // 0..128
+    public let h: Double // 0..360
+    public let alpha: Double // 0..1
 
-    init(l: Double, c: Double, h: Double, alpha: Double) {
+    public init(l: Double, c: Double, h: Double, alpha: Double) {
         self.l = l
         self.c = c
         self.h = h
@@ -292,11 +283,18 @@ struct LCHColor {
 
 // MARK: - HSL
 
-struct HSLColor {
-    let h: Double // 0..360
-    let s: Double // 0..100
-    let l: Double // 0..100
-    let alpha: Double // 0..1
+public struct HSLColor {
+    public let h: Double // 0..360
+    public let s: Double // 0..100
+    public let l: Double // 0..100
+    public let alpha: Double // 0..1
+
+    public init(h: Double, s: Double, l: Double, alpha: Double) {
+        self.h = h
+        self.s = s
+        self.l = l
+        self.alpha = alpha
+    }
 
     /// Converts HSL to RGB (https://en.wikipedia.org/wiki/HSL_and_HSV)
     func toRGB() -> RGBColor {
@@ -331,11 +329,18 @@ struct HSLColor {
 
 // MARK: - HSB / HSV
 
-struct HSBColor {
-    let h: Double // 0..360
-    let s: Double // 0..100
-    let b: Double // 0..100
-    let alpha: Double // 0..1
+public struct HSBColor {
+    public let h: Double // 0..360
+    public let s: Double // 0..100
+    public let b: Double // 0..100
+    public let alpha: Double // 0..1
+
+    public init(h: Double, s: Double, b: Double, alpha: Double) {
+        self.h = h
+        self.s = s
+        self.b = b
+        self.alpha = alpha
+    }
 
     /// Converts HSB to RGB (https://en.wikipedia.org/wiki/HSL_and_HSV)
     func toRGB() -> RGBColor {
