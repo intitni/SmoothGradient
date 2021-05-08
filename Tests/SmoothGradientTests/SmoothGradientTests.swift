@@ -332,7 +332,7 @@ final class SmoothGradientTests: XCTestCase {
 
 extension SmoothGradient.RGBColor: Equatable {
     public static func == (lhs: SmoothGradient.RGBColor, rhs: SmoothGradient.RGBColor) -> Bool {
-        func closeEnough(l: CGFloat, r: CGFloat, v: CGFloat) -> Bool {
+        func closeEnough(l: Double, r: Double, v: Double) -> Bool {
             abs(l - r) < v
         }
         return closeEnough(l: lhs.r, r: rhs.r, v: 0.01)
@@ -344,7 +344,7 @@ extension SmoothGradient.RGBColor: Equatable {
 
 extension LCHColor: Equatable {
     public static func == (lhs: LCHColor, rhs: LCHColor) -> Bool {
-        func closeEnough(l: CGFloat, r: CGFloat, v: CGFloat) -> Bool {
+        func closeEnough(l: Double, r: Double, v: Double) -> Bool {
             abs(l - r) < v
         }
         return closeEnough(l: lhs.l, r: rhs.l, v: 0.5)
@@ -356,7 +356,7 @@ extension LCHColor: Equatable {
 
 extension HSLColor: Equatable {
     public static func == (lhs: HSLColor, rhs: HSLColor) -> Bool {
-        func closeEnough(l: CGFloat, r: CGFloat, d: CGFloat) -> Bool {
+        func closeEnough(l: Double, r: Double, d: Double) -> Bool {
             abs(l - r) < d
         }
         return closeEnough(l: lhs.l, r: rhs.l, d: 0.5)
@@ -368,7 +368,7 @@ extension HSLColor: Equatable {
 
 extension HSBColor: Equatable {
     public static func == (lhs: HSBColor, rhs: HSBColor) -> Bool {
-        func closeEnough(l: CGFloat, r: CGFloat, d: CGFloat) -> Bool {
+        func closeEnough(l: Double, r: Double, d: Double) -> Bool {
             abs(l - r) < d
         }
         return closeEnough(l: lhs.h, r: rhs.h, d: 0.5)
