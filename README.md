@@ -1,7 +1,8 @@
 # SmoothGradient
 
 ![License](https://img.shields.io/github/license/intitni/SmoothGradient)
-![SPM](https://img.shields.io/badge/SPM-Supported-critical)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fintitni%2FSmoothGradient%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/intitni/SmoothGradient)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fintitni%2FSmoothGradient%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/intitni/SmoothGradient)
 
 SmoothGradient helps you generate beautiful and buttery-smooth gradients. It helps you avoid gray dead zones in the middle of your gradients by interpolating colors in color spaces other than RGB. 
 
