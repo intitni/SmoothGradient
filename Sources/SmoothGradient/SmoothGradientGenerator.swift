@@ -6,12 +6,24 @@ public enum SmoothGradientInterpolation {
 }
 
 /// Define the number of intermediate colors to generate.
-public enum SmoothGradientPrecision: Int {
-    case low = 1
-    case lowMedium = 3
-    case medium = 5
-    case mediumHigh = 7
-    case high = 9
+public enum SmoothGradientPrecision {
+    case low
+    case lowMedium
+    case medium
+    case mediumHigh
+    case high
+    case custom(Int)
+  
+    func precisionToCount() -> Int {
+      switch self {
+        case .low: return 1
+        case .lowMedium: return 3
+        case .medium: return 5
+        case .mediumHigh: return 7
+        case .high: return 9
+        case .custom(let value): return value
+      }
+    }
 }
 
 protocol RGBColorConvertible {
@@ -35,7 +47,7 @@ public struct SmoothGradientGenerator {
         interpolation: SmoothGradientInterpolation = .hcl,
         precision: SmoothGradientPrecision = .medium
     ) -> [RGBColor] {
-        let count = precision.rawValue
+        let count = precision.precisionToCount()
         return interpolate(from: from, to: to, count: count, interpolation: interpolation)
     }
 
@@ -68,7 +80,7 @@ public struct SmoothGradientGenerator {
     ) -> [LCHColor] {
         switch interpolation {
         case .hcl:
-            let count = precision.rawValue
+            let count = precision.precisionToCount()
             return interpolate(from: from, to: to, count: count)
         default:
             return generateAsRGBColor(
@@ -93,7 +105,7 @@ public struct SmoothGradientGenerator {
     ) -> [HSLColor] {
         switch interpolation {
         case .hsl:
-            let count = precision.rawValue
+            let count = precision.precisionToCount()
             return interpolate(from: from, to: to, count: count)
         default:
             return generateAsRGBColor(
@@ -118,7 +130,7 @@ public struct SmoothGradientGenerator {
     ) -> [HSBColor] {
         switch interpolation {
         case .hsb:
-            let count = precision.rawValue
+            let count = precision.precisionToCount()
             return interpolate(from: from, to: to, count: count)
         default:
             return generateAsRGBColor(
