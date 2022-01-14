@@ -8,6 +8,10 @@ let package = Package(
         .library(
             name: "SmoothGradient",
             targets: ["SmoothGradient"]),
+        .library(
+            name: "SmoothGradientDynamic",
+            type: .dynamic,
+            targets: ["SmoothGradient"]),
     ],
     targets: [
         .target(
