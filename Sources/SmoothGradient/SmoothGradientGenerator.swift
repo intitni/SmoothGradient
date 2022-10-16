@@ -236,13 +236,12 @@ public extension SmoothGradientGenerator {
 
 extension NSColor: RGBColorConvertible {
     func toRGB() -> RGBColor {
-        var r: CGFloat = 0
-        var g: CGFloat = 0
-        var b: CGFloat = 0
-        var a: CGFloat = 0
-
-        getRed(&r, green: &g, blue: &b, alpha: &a)
-        return RGBColor(r: Double(r), g: Double(g), b: Double(b), alpha: Double(a))
+        let sRGBColor = usingColorSpace(.sRGB);
+        let r = sRGBColor?.redComponent ?? 0
+        let g = sRGBColor?.greenComponent ?? 0
+        let b = sRGBColor?.blueComponent ?? 0
+        let a = sRGBColor?.alphaComponent ?? 0
+        return RGBColor(r: r, g: g, b: b, alpha: a)
     }
 }
 
@@ -285,6 +284,11 @@ public extension SmoothGradientGenerator {
 @available(iOS 14.0, OSX 11, tvOS 14, *)
 extension Color {
     func toRGB() -> RGBColor {
+        #if canImport(UIKit)
+        return UIColor(self).toRGB()
+        #elseif canImport(AppKit)
+        return NSColor(self).toRGB()
+        #else
         guard let components = cgColor?.components else { return .init(r: 0, g: 0, b: 0, alpha: 0) }
         return .init(
             r: Double(components[safely: 0] ?? 0),
@@ -292,6 +296,7 @@ extension Color {
             b: Double(components[safely: 2] ?? 0),
             alpha: Double(components[safely: 3] ?? 0)
         )
+        #endif
     }
 }
 
